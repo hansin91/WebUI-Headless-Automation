@@ -556,10 +556,10 @@ body {
                     <li class="passes">passes: <em>6</em></li>
                     <li class="pending">pending: <em>0</em></li>
                     <li class="failures">failures: <em>0</em></li>
-                    <li class="duration">duration: <em>9.7s</em></li>
+                    <li class="duration">duration: <em>14.9s</em></li>
                 </ul>
             </div>
-            <ul id="report"><li class="suite"><h1>Saucedemo on chrome Test</h1><ul><li class="test pass slow"><h2>Login successfully<span class="duration">256ms</span></h2><pre><code>async () =&#x3E; {
+            <ul id="report"><li class="suite"><h1>Saucedemo on chrome Test</h1><ul><li class="test pass slow"><h2>Login successfully<span class="duration">269ms</span></h2><pre><code>async () =&#x3E; {
       // check sidebar and logout button
       const sidebar = await driver.wait(
         until.elementLocated(By.xpath(&#x27;//div[@class=&#x22;bm-menu-wrap&#x22;]&#x27;)),
@@ -577,25 +577,21 @@ body {
       const selectedOptionText = await driver
         .findElement(By.xpath(&#x27;//*[@class=&#x22;active_option&#x22;]&#x27;))
         .getText();
-      const selectElement = await driver.findElement(
-        By.xpath(&#x27;//select[@class=&#x22;product_sort_container&#x22;]&#x27;),
+      const firstOption = await driver.findElement(
+        By.xpath(&#x27;//select[@class=&#x22;product_sort_container&#x22;]/option[1]&#x27;),
       );
-      const select = new Select(selectElement);
-      const firstOption = await select.getOptions().then((options) =&#x3E; options[0]);
       const firstOptionText = await firstOption.getText();
       assert.strictEqual(selectedOptionText, firstOptionText);
       // check product displayed
-      await waitUntilProductsContainerLoaded();
-      const inventoryList = await driver.findElement(By.className(&#x22;inventory_list&#x22;));
-      const inventoryItems = await inventoryList.findElements(By.className(&#x22;inventory_item&#x22;));
+      const inventoryItems = await getInventoryItems();
       assert.strictEqual(inventoryItems.length, 6);
-    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (low to high)<span class="duration">388ms</span></h2><pre><code>async () =&#x3E; {
+    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (low to high)<span class="duration">487ms</span></h2><pre><code>async () =&#x3E; {
       await chooseSortOption(SORT_PRICE_BY_ASC);
       await findSortedProducts(SORT_PRICE_BY_ASC);
-    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (high to low)<span class="duration">378ms</span></h2><pre><code>async () =&#x3E; {
+    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (high to low)<span class="duration">376ms</span></h2><pre><code>async () =&#x3E; {
       await chooseSortOption(SORT_PRICE_BY_DESC);
       await findSortedProducts(SORT_PRICE_BY_DESC);
-    }</code></pre></li></ul></li><li class="suite"><h1>Saucedemo on MicrosoftEdge Test</h1><ul><li class="test pass slow"><h2>Login successfully<span class="duration">306ms</span></h2><pre><code>async () =&#x3E; {
+    }</code></pre></li></ul></li><li class="suite"><h1>Saucedemo on MicrosoftEdge Test</h1><ul><li class="test pass slow"><h2>Login successfully<span class="duration">283ms</span></h2><pre><code>async () =&#x3E; {
       // check sidebar and logout button
       const sidebar = await driver.wait(
         until.elementLocated(By.xpath(&#x27;//div[@class=&#x22;bm-menu-wrap&#x22;]&#x27;)),
@@ -613,19 +609,15 @@ body {
       const selectedOptionText = await driver
         .findElement(By.xpath(&#x27;//*[@class=&#x22;active_option&#x22;]&#x27;))
         .getText();
-      const selectElement = await driver.findElement(
-        By.xpath(&#x27;//select[@class=&#x22;product_sort_container&#x22;]&#x27;),
+      const firstOption = await driver.findElement(
+        By.xpath(&#x27;//select[@class=&#x22;product_sort_container&#x22;]/option[1]&#x27;),
       );
-      const select = new Select(selectElement);
-      const firstOption = await select.getOptions().then((options) =&#x3E; options[0]);
       const firstOptionText = await firstOption.getText();
       assert.strictEqual(selectedOptionText, firstOptionText);
       // check product displayed
-      await waitUntilProductsContainerLoaded();
-      const inventoryList = await driver.findElement(By.className(&#x22;inventory_list&#x22;));
-      const inventoryItems = await inventoryList.findElements(By.className(&#x22;inventory_item&#x22;));
+      const inventoryItems = await getInventoryItems();
       assert.strictEqual(inventoryItems.length, 6);
-    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (low to high)<span class="duration">410ms</span></h2><pre><code>async () =&#x3E; {
+    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (low to high)<span class="duration">412ms</span></h2><pre><code>async () =&#x3E; {
       await chooseSortOption(SORT_PRICE_BY_ASC);
       await findSortedProducts(SORT_PRICE_BY_ASC);
     }</code></pre></li><li class="test pass slow"><h2>Sort products by price (high to low)<span class="duration">371ms</span></h2><pre><code>async () =&#x3E; {

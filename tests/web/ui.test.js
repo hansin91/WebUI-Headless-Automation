@@ -92,10 +92,15 @@ const chooseSortOption = async (sort) => {
   assert.strictEqual(selectedOptionText, sort);
 };
 
-const findSortedProducts = async (sort) => {
+const getInventoryItems = async () => {
   await waitUntilProductsContainerLoaded();
   const inventoryList = await driver.findElement(By.className("inventory_list"));
   const inventoryItems = await inventoryList.findElements(By.className("inventory_item"));
+  return inventoryItems;
+};
+
+const findSortedProducts = async (sort) => {
+  const inventoryItems = await getInventoryItems();
   const prices = await fetchPricesFromInventoryItems(inventoryItems);
   const sortedPrices = [...prices].sort((a, b) => (sort === SORT_PRICE_BY_ASC ? a - b : b - a));
   assert.deepStrictEqual(
@@ -134,18 +139,14 @@ browsers.forEach((browser) => {
       const selectedOptionText = await driver
         .findElement(By.xpath('//*[@class="active_option"]'))
         .getText();
-      const selectElement = await driver.findElement(
-        By.xpath('//select[@class="product_sort_container"]'),
+      const firstOption = await driver.findElement(
+        By.xpath('//select[@class="product_sort_container"]/option[1]'),
       );
-      const select = new Select(selectElement);
-      const firstOption = await select.getOptions().then((options) => options[0]);
       const firstOptionText = await firstOption.getText();
       assert.strictEqual(selectedOptionText, firstOptionText);
 
       // check product displayed
-      await waitUntilProductsContainerLoaded();
-      const inventoryList = await driver.findElement(By.className("inventory_list"));
-      const inventoryItems = await inventoryList.findElements(By.className("inventory_item"));
+      const inventoryItems = await getInventoryItems();
       assert.strictEqual(inventoryItems.length, 6);
     });
 
