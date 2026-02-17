@@ -1,5 +1,4 @@
 import { Builder, By, until } from "selenium-webdriver";
-import { Select } from "selenium-webdriver/lib/select.js";
 import assert from "assert";
 import chrome from "selenium-webdriver/chrome.js";
 import edge from "selenium-webdriver/edge.js";
@@ -10,6 +9,7 @@ const USERNAME = "standard_user";
 const PASSWORD = "secret_sauce";
 const SORT_PRICE_BY_ASC = "Price (low to high)";
 const SORT_PRICE_BY_DESC = "Price (high to low)";
+const SIDE_NAVS = ["All Items", "About", "Logout", "Reset App State"];
 let driver = await new Builder();
 
 const setupInitialDriver = async (browser) => {
@@ -37,26 +37,30 @@ const login = async () => {
 const waitUntilSortOptionsLoaded = async () => {
   const sortContainer = await driver.wait(
     until.elementLocated(By.xpath('//*[@class="select_container"]')),
-    1000,
+    2000,
   );
 
   await driver.wait(
     until.elementIsVisible(sortContainer),
-    500,
+    2000,
     "Sort container should be displayed",
   );
+  const isVisible = await sortContainer.isDisplayed();
+  assert.strictEqual(isVisible, true, "Sort options container should be displayed");
 };
 
 const waitUntilProductsContainerLoaded = async () => {
   const inventoryContainer = await driver.wait(
     until.elementLocated(By.xpath('//div[@id="inventory_container"]')),
-    1000,
+    3000,
   );
   await driver.wait(
     until.elementIsVisible(inventoryContainer),
-    500,
+    3000,
     "Products container should be displayed",
   );
+  const isVisible = await inventoryContainer.isDisplayed();
+  assert.strictEqual(isVisible, true, "Products container should be displayed");
 };
 
 const fetchPricesFromInventoryItems = async (inventoryItems) => {
@@ -121,18 +125,40 @@ browsers.forEach((browser) => {
     });
 
     it("Login successfully", async () => {
-      // check sidebar and logout button
+      // check sidebar
       const sidebar = await driver.wait(
         until.elementLocated(By.xpath('//div[@class="bm-menu-wrap"]')),
-        1000,
+        3000,
       );
-      await driver.wait(until.elementIsVisible(sidebar), 5000, "Sidebar should be displayed");
-      const logoutAnchor = await driver.findElement(By.xpath('//a[@id="logout_sidebar_link"]'));
-      const logoutText = await driver.executeScript(
-        "return arguments[0].textContent;",
-        logoutAnchor,
+      await driver.wait(until.elementIsVisible(sidebar), 3000, "Sidebar should be displayed");
+      const isSidebarVisible = await sidebar.isDisplayed();
+      assert.strictEqual(isSidebarVisible, true, "Sidebar is not visible");
+
+      const sideNav = await driver.findElement(By.xpath('//*[@class="bm-item-list"]'));
+      const navItems = await sideNav.findElements(By.className("bm-item menu-item"));
+      assert.strictEqual(navItems.length, 4);
+
+      const navTexts = await Promise.all(
+        navItems.map(async (item) => {
+          const text = await driver.executeScript("return arguments[0].textContent.trim();", item);
+          return text;
+        }),
       );
-      assert.strictEqual(logoutText, "Logout", "Logout button should be displayed");
+      assert.deepStrictEqual(navTexts, SIDE_NAVS, "Nav items do not match expected values");
+
+      // check shopping cart
+      const shoppingCartButtonContaier = await driver.wait(
+        until.elementLocated(By.xpath('//*[@id="shopping_cart_container"]')),
+        2000,
+      );
+      await driver.wait(
+        until.elementIsVisible(shoppingCartButtonContaier),
+        2000,
+        "Shopping cart button container should be displayed",
+      );
+      const shoppingCartButton = await driver.findElement(By.className("shopping_cart_link"));
+      const isVisible = await shoppingCartButton.isDisplayed();
+      assert.strictEqual(isVisible, true, "Shopping cart link is not visible");
 
       // check sort container should be displayed
       await waitUntilSortOptionsLoaded();

@@ -556,22 +556,41 @@ body {
                     <li class="passes">passes: <em>6</em></li>
                     <li class="pending">pending: <em>0</em></li>
                     <li class="failures">failures: <em>0</em></li>
-                    <li class="duration">duration: <em>14.9s</em></li>
+                    <li class="duration">duration: <em>12.6s</em></li>
                 </ul>
             </div>
-            <ul id="report"><li class="suite"><h1>Saucedemo on chrome Test</h1><ul><li class="test pass slow"><h2>Login successfully<span class="duration">269ms</span></h2><pre><code>async () =&#x3E; {
-      // check sidebar and logout button
+            <ul id="report"><li class="suite"><h1>Saucedemo on chrome Test</h1><ul><li class="test pass slow"><h2>Login successfully<span class="duration">274ms</span></h2><pre><code>async () =&#x3E; {
+      // check sidebar
       const sidebar = await driver.wait(
         until.elementLocated(By.xpath(&#x27;//div[@class=&#x22;bm-menu-wrap&#x22;]&#x27;)),
-        1000,
+        3000,
       );
-      await driver.wait(until.elementIsVisible(sidebar), 5000, &#x22;Sidebar should be displayed&#x22;);
-      const logoutAnchor = await driver.findElement(By.xpath(&#x27;//a[@id=&#x22;logout_sidebar_link&#x22;]&#x27;));
-      const logoutText = await driver.executeScript(
-        &#x22;return arguments[0].textContent;&#x22;,
-        logoutAnchor,
+      await driver.wait(until.elementIsVisible(sidebar), 3000, &#x22;Sidebar should be displayed&#x22;);
+      const isSidebarVisible = await sidebar.isDisplayed();
+      assert.strictEqual(isSidebarVisible, true, &#x22;Sidebar is not visible&#x22;);
+      const sideNav = await driver.findElement(By.xpath(&#x27;//*[@class=&#x22;bm-item-list&#x22;]&#x27;));
+      const navItems = await sideNav.findElements(By.className(&#x22;bm-item menu-item&#x22;));
+      assert.strictEqual(navItems.length, 4);
+      const navTexts = await Promise.all(
+        navItems.map(async (item) =&#x3E; {
+          const text = await driver.executeScript(&#x22;return arguments[0].textContent.trim();&#x22;, item);
+          return text;
+        }),
       );
-      assert.strictEqual(logoutText, &#x22;Logout&#x22;, &#x22;Logout button should be displayed&#x22;);
+      assert.deepStrictEqual(navTexts, SIDE_NAVS, &#x22;Nav items do not match expected values&#x22;);
+      // check shopping cart
+      const shoppingCartButtonContaier = await driver.wait(
+        until.elementLocated(By.xpath(&#x27;//*[@id=&#x22;shopping_cart_container&#x22;]&#x27;)),
+        2000,
+      );
+      await driver.wait(
+        until.elementIsVisible(shoppingCartButtonContaier),
+        2000,
+        &#x22;Shopping cart button container should be displayed&#x22;,
+      );
+      const shoppingCartButton = await driver.findElement(By.className(&#x22;shopping_cart_link&#x22;));
+      const isVisible = await shoppingCartButton.isDisplayed();
+      assert.strictEqual(isVisible, true, &#x22;Shopping cart link is not visible&#x22;);
       // check sort container should be displayed
       await waitUntilSortOptionsLoaded();
       const selectedOptionText = await driver
@@ -585,25 +604,44 @@ body {
       // check product displayed
       const inventoryItems = await getInventoryItems();
       assert.strictEqual(inventoryItems.length, 6);
-    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (low to high)<span class="duration">487ms</span></h2><pre><code>async () =&#x3E; {
+    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (low to high)<span class="duration">391ms</span></h2><pre><code>async () =&#x3E; {
       await chooseSortOption(SORT_PRICE_BY_ASC);
       await findSortedProducts(SORT_PRICE_BY_ASC);
-    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (high to low)<span class="duration">376ms</span></h2><pre><code>async () =&#x3E; {
+    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (high to low)<span class="duration">301ms</span></h2><pre><code>async () =&#x3E; {
       await chooseSortOption(SORT_PRICE_BY_DESC);
       await findSortedProducts(SORT_PRICE_BY_DESC);
-    }</code></pre></li></ul></li><li class="suite"><h1>Saucedemo on MicrosoftEdge Test</h1><ul><li class="test pass slow"><h2>Login successfully<span class="duration">283ms</span></h2><pre><code>async () =&#x3E; {
-      // check sidebar and logout button
+    }</code></pre></li></ul></li><li class="suite"><h1>Saucedemo on MicrosoftEdge Test</h1><ul><li class="test pass slow"><h2>Login successfully<span class="duration">225ms</span></h2><pre><code>async () =&#x3E; {
+      // check sidebar
       const sidebar = await driver.wait(
         until.elementLocated(By.xpath(&#x27;//div[@class=&#x22;bm-menu-wrap&#x22;]&#x27;)),
-        1000,
+        3000,
       );
-      await driver.wait(until.elementIsVisible(sidebar), 5000, &#x22;Sidebar should be displayed&#x22;);
-      const logoutAnchor = await driver.findElement(By.xpath(&#x27;//a[@id=&#x22;logout_sidebar_link&#x22;]&#x27;));
-      const logoutText = await driver.executeScript(
-        &#x22;return arguments[0].textContent;&#x22;,
-        logoutAnchor,
+      await driver.wait(until.elementIsVisible(sidebar), 3000, &#x22;Sidebar should be displayed&#x22;);
+      const isSidebarVisible = await sidebar.isDisplayed();
+      assert.strictEqual(isSidebarVisible, true, &#x22;Sidebar is not visible&#x22;);
+      const sideNav = await driver.findElement(By.xpath(&#x27;//*[@class=&#x22;bm-item-list&#x22;]&#x27;));
+      const navItems = await sideNav.findElements(By.className(&#x22;bm-item menu-item&#x22;));
+      assert.strictEqual(navItems.length, 4);
+      const navTexts = await Promise.all(
+        navItems.map(async (item) =&#x3E; {
+          const text = await driver.executeScript(&#x22;return arguments[0].textContent.trim();&#x22;, item);
+          return text;
+        }),
       );
-      assert.strictEqual(logoutText, &#x22;Logout&#x22;, &#x22;Logout button should be displayed&#x22;);
+      assert.deepStrictEqual(navTexts, SIDE_NAVS, &#x22;Nav items do not match expected values&#x22;);
+      // check shopping cart
+      const shoppingCartButtonContaier = await driver.wait(
+        until.elementLocated(By.xpath(&#x27;//*[@id=&#x22;shopping_cart_container&#x22;]&#x27;)),
+        2000,
+      );
+      await driver.wait(
+        until.elementIsVisible(shoppingCartButtonContaier),
+        2000,
+        &#x22;Shopping cart button container should be displayed&#x22;,
+      );
+      const shoppingCartButton = await driver.findElement(By.className(&#x22;shopping_cart_link&#x22;));
+      const isVisible = await shoppingCartButton.isDisplayed();
+      assert.strictEqual(isVisible, true, &#x22;Shopping cart link is not visible&#x22;);
       // check sort container should be displayed
       await waitUntilSortOptionsLoaded();
       const selectedOptionText = await driver
@@ -617,10 +655,10 @@ body {
       // check product displayed
       const inventoryItems = await getInventoryItems();
       assert.strictEqual(inventoryItems.length, 6);
-    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (low to high)<span class="duration">412ms</span></h2><pre><code>async () =&#x3E; {
+    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (low to high)<span class="duration">429ms</span></h2><pre><code>async () =&#x3E; {
       await chooseSortOption(SORT_PRICE_BY_ASC);
       await findSortedProducts(SORT_PRICE_BY_ASC);
-    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (high to low)<span class="duration">371ms</span></h2><pre><code>async () =&#x3E; {
+    }</code></pre></li><li class="test pass slow"><h2>Sort products by price (high to low)<span class="duration">328ms</span></h2><pre><code>async () =&#x3E; {
       await chooseSortOption(SORT_PRICE_BY_DESC);
       await findSortedProducts(SORT_PRICE_BY_DESC);
     }</code></pre></li></ul></li></ul>
