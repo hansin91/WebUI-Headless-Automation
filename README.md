@@ -1,4 +1,4 @@
-# WebUI Automation
+# WebUI Headless Automation
 
 ## Prerequisite
 
