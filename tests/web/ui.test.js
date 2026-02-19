@@ -16,10 +16,14 @@ const setupInitialDriver = async (browser) => {
   let options = null;
   if (browser === "chrome") {
     options = new chrome.Options();
+    options.addArguments("--headless");
+    options.addArguments("--window-size=1920,1080");
     options.addArguments("--incognito");
     driver = await new Builder().forBrowser("chrome").setChromeOptions(options).build();
   } else {
     options = new edge.Options();
+    options.addArguments("--headless=new");
+    options.addArguments("--window-size=1920,1080");
     options.addArguments("--inprivate");
     driver = await new Builder().forBrowser("MicrosoftEdge").setEdgeOptions(options).build();
   }
@@ -162,9 +166,10 @@ browsers.forEach((browser) => {
 
       // check sort container should be displayed
       await waitUntilSortOptionsLoaded();
-      const selectedOptionText = await driver
-        .findElement(By.xpath('//*[@class="active_option"]'))
-        .getText();
+      const selectedOptionElement = await driver.findElement(
+        By.xpath('//*[@class="active_option"]'),
+      );
+      const selectedOptionText = await selectedOptionElement.getText();
       const firstOption = await driver.findElement(
         By.xpath('//select[@class="product_sort_container"]/option[1]'),
       );
